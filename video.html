@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+        div{
+            /* border: 1px solid black; */
+        }
+        #navbar{
+            height: 100px;
+        }
+
+        #main{
+            height: 470px;
+            display: flex;
+            gap: 20px;
+        }
+
+        #video_detail{
+            flex: 3
+        }
+        #recommendation{
+            overflow: scroll;
+            flex: 2;
+            
+        }
+        #recommendation>div{
+            display: flex;
+            gap: 10px;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            /* width:30%; */
+            height: 130px;
+            margin-bottom: 10px;
+
+            
+        }
+        #logo {
+            text-decoration: none;
+        }
+        
+    </style>
+</head>
+<body>
+    
+
+    <!-- <div id="navbar">
+
+        <a id="logo" href="youtube.html"><h2>YouTube</h2></a>
+    <input type="text" id="video">
+<button onclick="searchVideo()">Search</button> 
+    </div> -->
+    <div id="navbar">
+        <div id="youtube"><a id="logo" href="youtube.html"><h2 >YouTube</h2></a></div>
+        <div id="search-bar"><input type="text" id="video">
+            <button onclick="searchVideo()">Search</button> </div>
+      </div>
+      <div id="search_results">
+        
+    <div id="main">
+        <div id="video_detail"></div>
+        <div id="recommendation"></div>
+    </div>
+    
+</body>
+</html>
+
+<script>
+  let {videoId,snippet} = JSON.parse(localStorage.getItem("clicked_video"));
+
+
+  let youtube_videos = JSON.parse(localStorage.getItem("youtube_videos"))
+
+  let recommendation_div = document.getElementById("recommendation");
+  const API = "AIzaSyD8MyIIv-aDXHAnQGgxx38xLw4L70J9mbE";
+const result_div = document.getElementById("search_results");
+
+  async function searchVideo(){
+
+try{
+let video_query = document.getElementById("video").value;
+
+ let response = await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=20&q=${video_query}&type=video&key=${API}`);
+ let data = await response.json();
+ let movies = data.items
+ localStorage.setItem("youtube_videos",JSON.stringify(movies));
+ appendMovies(movies);
+
+//  console.log("data:",movies);
+
+
+}
+catch(err){
+    console.log("err:" ,err);
+}
+}
+
+// const appendMovies = (items) => {
+
+// result_div.innerHTML = null;
+// items.map((el) => {
+//    let{id:{videoId},snippet} = el;
+
+//    let div = document.createElement("div");
+
+// //    let iframe = document.createElement('iframe');
+// //    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+// //    iframe.height = "215";
+// //    iframe.width = "320";
+// //    iframe.setAttribute("allowfullscreen","true")
+// //    result_div.append(iframe);
+//    let title = document.createElement("p")
+//    title.innerHTML= snippet.title;
+//    let thumbnail = document.createElement("img");
+//    thumbnail.src = snippet.thumbnails.medium.url;
+
+//    div.append(thumbnail,title);
+//    result_div.append(div);
+  
+//   let send_to_data = {
+//       snippet,
+//       videoId
+      
+//   }
+
+//   div.onclick = () => {
+//       showVideo(send_to_data)
+//   }
+
+// });
+
+
+// };
+// function showVideo(data) {
+//      localStorage.setItem("clicked_video",JSON.stringify(data));
+//      window.location.href= "video.html";
+//  }
+
+
+
+  console.log(snippet);
+  let titles = document.createElement("p")
+       titles.innerHTML= snippet.title;
+  
+  let video_div = document.getElementById("video_detail");
+   let iframe = document.createElement("iframe");
+   iframe.src = `https://www.youtube.com/embed/${videoId}`
+   iframe.width = "100%";
+   iframe.height = "85%";
+   iframe.setAttribute("allowfullscreen","true")
+   video_div.append(iframe,titles);
+
+
+const appendMovies = (items) => {
+
+// recommendation_div.innerHTML = null;
+items.map((el) => {
+   let{id:{videoId},snippet} = el;
+   
+   let div = document.createElement("div");
+
+//    let iframe = document.createElement('iframe');
+//    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+//    iframe.height = "215";
+//    iframe.width = "320";
+//    iframe.setAttribute("allowfullscreen","true")
+//    result_div.append(iframe);
+   let title = document.createElement("p")
+   title.innerHTML= snippet.title;
+   let thumbnail = document.createElement("img");
+   thumbnail.src = snippet.thumbnails.medium.url;
+
+   div.append(thumbnail,title);
+   recommendation_div.append(div);
+  
+  let send_to_data = {
+      snippet,
+      videoId
+      
+  }
+
+  div.onclick = () => {
+      showVideo(send_to_data)
+  }
+
+});
+
+
+};
+
+function showVideo(data) {
+ localStorage.setItem("clicked_video",JSON.stringify(data));
+ window.location.href= "video.html";
+}
+appendMovies(youtube_videos);
+
+
+</script>
